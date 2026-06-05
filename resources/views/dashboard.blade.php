@@ -6,6 +6,25 @@
 
     <h1 class="h1 mb-3">Welcome, admin!</h1>
     <div class="container">
+        <!-- Total Users Statistics Card -->
+        <div class="row mb-4">
+            <div class="col-md-12 mb-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="card-text text-muted mb-1">Total Users</p>
+                                <h3 class="card-title mb-0 text-primary">{{ count($users) }}</h3>
+                            </div>
+                            <div class="text-primary" style="font-size: 2.5rem;">
+                                👥
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <button class="btn btn-primary mb-3" 
         data-bs-toggle="modal" 
         data-bs-target="#staticBackdrop"
@@ -60,6 +79,11 @@
             </form>
         </div>
 
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white border-bottom">
+                <h5 class="card-title mb-0">All Users</h5>
+            </div>
+            <div class="card-body">
         <table class="table">
             <thead>
                 <tr>
@@ -141,6 +165,49 @@
                 @endforeach
             </tbody>
         </table>
+            </div>
+        </div>
     </div>
+
+    <!-- Chart.js Script -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // User Count Gauge Chart
+        const userCtx = document.getElementById('userCountChart');
+        if (userCtx) {
+            new Chart(userCtx.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Total Users'],
+                    datasets: [{
+                        label: 'Users',
+                        data: [{{ count($users) }}],
+                        backgroundColor: [
+                            '#0d6efd'
+                        ],
+                        borderColor: [
+                            '#0b5ed7'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 12
+                                },
+                                padding: 15
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
 
 @endsection

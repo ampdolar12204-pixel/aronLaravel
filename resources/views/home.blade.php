@@ -4,8 +4,104 @@
 
     @include('toastdisplay')
 
-    <h1 class="h1 mb-3">Welcome, {{session('user')->name}}</h1>
+    <h1 class="h1 mb-4">Welcome, {{session('user')->name}}</h1>
     <div class="container">
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-12 mb-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p class="card-text text-muted mb-1">Your Total Projects</p>
+                                <h3 class="card-title mb-0 text-success">{{ $totalProjects }}</h3>
+                            </div>
+                            <div class="text-success" style="font-size: 2.5rem;">
+                                📊
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <p class="card-text text-muted mb-1">Pending</p>
+                        <h2 class="card-title mb-0" style="color: #dc3545;">{{ $pendingProjects }}</h2>
+                        <small class="text-muted">projects</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <p class="card-text text-muted mb-1">Ongoing</p>
+                        <h2 class="card-title mb-0" style="color: #ffc107;">{{ $ongoingProjects }}</h2>
+                        <small class="text-muted">projects</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <p class="card-text text-muted mb-1">Completed</p>
+                        <h2 class="card-title mb-0" style="color: #28a745;">{{ $completedProjects }}</h2>
+                        <small class="text-muted">projects</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                    View Other Analytics
+                </button>
+                </h2>
+                <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-header bg-white border-bottom">
+                                        <h5 class="card-title mb-0">Project Status Distribution</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="projectStatusChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-header bg-white border-bottom">
+                                        <h5 class="card-title mb-0">Project Count Breakdown</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="projectCountChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        
+        <!-- Projects Table Section -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white border-bottom">
+                <h5 class="card-title mb-0">Your Projects</h5>
+            </div>
+            <div class="card-body">
         <button class="btn btn-primary mb-3" 
         data-bs-toggle="modal" 
         data-bs-target="#staticBackdrop"
@@ -144,5 +240,90 @@
                 @endforeach
             </tbody>
         </table>
+            </div>
+        </div>
     </div>
+
+    <!-- Chart.js Script -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Project Status Pie Chart
+        const statusCtx = document.getElementById('projectStatusChart').getContext('2d');
+        new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending', 'Ongoing', 'Completed'],
+                datasets: [{
+                    label: 'Project Status',
+                    data: [{{ $pendingProjects }}, {{ $ongoingProjects }}, {{ $completedProjects }}],
+                    backgroundColor: [
+                        '#dc3545',
+                        '#ffc107',
+                        '#28a745'
+                    ],
+                    borderColor: [
+                        '#c82333',
+                        '#e0a800',
+                        '#218838'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                size: 12
+                            },
+                            padding: 15
+                        }
+                    }
+                }
+            }
+        });
+
+        // Project Count Bar Chart
+        const countCtx = document.getElementById('projectCountChart').getContext('2d');
+        new Chart(countCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Pending', 'Ongoing', 'Completed'],
+                datasets: [{
+                    label: 'Number of Projects',
+                    data: [{{ $pendingProjects }}, {{ $ongoingProjects }}, {{ $completedProjects }}],
+                    backgroundColor: [
+                        '#dc3545',
+                        '#ffc107',
+                        '#28a745'
+                    ],
+                    borderColor: [
+                        '#c82333',
+                        '#e0a800',
+                        '#218838'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: Math.max({{ $pendingProjects }}, {{ $ongoingProjects }}, {{ $completedProjects }}) + 1
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    </script>
 @endsection

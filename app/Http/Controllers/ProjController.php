@@ -18,7 +18,13 @@ class ProjController extends Controller
             END
         ")->get();
 
-        return view('home', compact('projects'));
+        // Get statistics
+        $totalProjects = $projects->count();
+        $pendingProjects = $projects->where('status', 'Pending')->count();
+        $ongoingProjects = $projects->where('status', 'Ongoing')->count();
+        $completedProjects = $projects->where('status', 'Completed')->count();
+
+        return view('home', compact('projects', 'totalProjects', 'pendingProjects', 'ongoingProjects', 'completedProjects'));
     }
 
     function addproj(Request $request){
